@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <b>Software house de Jundiaí, SP.</b><br>
+  <b>Software house de SP.</b><br>
   Sites e sistemas rápidos, acessíveis e com cara própria.
 </p>
 
@@ -71,4 +71,4 @@ Hugo Shiroma, formado em computação pela USP. Portfólio em [shiroma.dev.br](h
 - E-mail: [adapt.tec.solucoesdigitais@gmail.com](mailto:adapt.tec.solucoesdigitais@gmail.com)
 - Site: [adapt.tec.br](https://adapt.tec.br) (no forno)
 
-<sub>Feito em Jundiaí, SP.</sub>
+<sub>Feito em SP.</sub>
