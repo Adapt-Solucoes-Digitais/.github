@@ -54,11 +54,11 @@ O nome vem de adaptação. O símbolo é uma sinapse: no travessão do **A**, do
 
 | Projeto | O que é |
 |---|---|
-| [Mel Sítio Santa Bárbara](https://mel-sitio-santa-barbara.hugo-shiroma.workers.dev) | Landing de mel puro artesanal. |
-| [Nêga Maluca Assistência Técnica](https://nega-maluca-assistencia-tecnica.hugo-shiroma.workers.dev) | Conserto de celular em Jarinu/SP, com orçamento direto pelo WhatsApp. |
-| [Viela Studio](https://viela-studio.hugo-shiroma.workers.dev) · *conceito* | Loja de streetwear em Next.js, Supabase e Mercado Pago. |
-| [Ramagem Garden Center](https://ramagem-garden.hugo-shiroma.workers.dev) · *conceito* | Garden center com planta em 3D (three.js) e rolagem suave. |
-| [Boteco do Nono](https://boteco-do-nono.hugo-shiroma.workers.dev) · *conceito* | Boteco com a casa principal e a filial no mesmo site. |
+| [Mel Sítio Santa Bárbara](https://mel-sitio-santa-barbara.adapt-tec.workers.dev) | Landing de mel puro artesanal. |
+| [Nêga Maluca Assistência Técnica](https://nega-maluca-assistencia-tecnica.adapt-tec.workers.dev) | Conserto de celular em Jarinu/SP, com orçamento direto pelo WhatsApp. |
+| [Viela Studio](https://viela-studio.adapt-tec.workers.dev) · *conceito* | Loja de streetwear em Next.js, Supabase e Mercado Pago. |
+| [Ramagem Garden Center](https://ramagem-garden.adapt-tec.workers.dev) · *conceito* | Garden center com planta em 3D (three.js) e rolagem suave. |
+| [Boteco do Nono](https://boteco-do-nono.adapt-tec.workers.dev) · *conceito* | Boteco com a casa principal e a filial no mesmo site. |
 
 Os marcados como *conceito* são marcas fictícias, feitas para mostrar o que dá para construir.
 
