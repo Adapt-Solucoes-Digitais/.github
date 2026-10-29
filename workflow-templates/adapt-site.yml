@@ -1,5 +1,13 @@
 name: Site
 
+# Padrão da Adapt: o mesmo arquivo em todo projeto, salvo como
+# .github/workflows/deploy.yml (o scripts/publicar.sh dispara ele).
+# Vem no modo prévia de lead: noindex em 3 camadas e publicação só manual.
+# No ar (cliente ou conceito): previa: false, a URL definitiva e, no if do
+# publicar, github.event_name != 'pull_request' para publicar a cada push.
+# App com servidor: comando_build (npx @opennextjs/cloudflare build) e
+# segredos_build com os nomes dos segredos do repositório.
+
 on:
   push:
     branches: [$default-branch]
@@ -12,17 +20,15 @@ jobs:
     uses: Adapt-Solucoes-Digitais/.github/.github/workflows/qualidade.yml@main
     with:
       env_build: |
-        NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+        NEXT_PUBLIC_SITE_URL=https://adapt-previa-exemplo.adapt-tec.workers.dev
 
   publicar:
     needs: qualidade
-    # Produção só no disparo manual. Quando o cliente aprovar publicar a cada
-    # push, troque por: github.event_name == 'push'
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    if: github.ref_name == github.event.repository.default_branch && github.event_name == 'workflow_dispatch'
     uses: Adapt-Solucoes-Digitais/.github/.github/workflows/publicar-cloudflare.yml@main
     with:
       destino: workers
-      previa: false
+      previa: true
       env_build: |
-        NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+        NEXT_PUBLIC_SITE_URL=https://adapt-previa-exemplo.adapt-tec.workers.dev
     secrets: inherit

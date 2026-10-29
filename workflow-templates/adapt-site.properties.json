@@ -1,7 +1,12 @@
 {
   "name": "Adapt · Site",
-  "description": "Build, typecheck, testes e lint em todo push e PR; publicação na Cloudflare por disparo manual.",
+  "description": "Padrão da Adapt: qualidade em todo push e PR e publicação no Cloudflare Workers (prévia de lead por disparo manual, site no ar a cada push).",
   "iconName": "adapt",
-  "categories": ["JavaScript", "TypeScript"],
-  "filePatterns": ["package.json$"]
+  "categories": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "filePatterns": [
+    "package.json$"
+  ]
 }
