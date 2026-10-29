@@ -29,6 +29,10 @@ on:
         description: Nome do projeto no Cloudflare Pages. Só para destino pages.
         type: string
         default: ""
+      segredos_build:
+        description: "Nomes de segredos do repositório que o build precisa, separados por espaço (ex.: NEXT_PUBLIC_SUPABASE_URL). Exige secrets: inherit na chamada."
+        type: string
+        default: ""
       pasta_saida:
         description: Pasta que o build gera (export estático do Next = out).
         type: string
@@ -90,6 +94,25 @@ jobs:
           if [ -n "$ENV_BUILD" ]; then printf '%s\n' "$ENV_BUILD" >> "$GITHUB_ENV"; fi
           if [ "$PREVIA" = "true" ]; then echo "NEXT_PUBLIC_PREVIA=true" >> "$GITHUB_ENV"; fi
 
+      - name: Segredos do build
+        if: inputs.segredos_build != ''
+        env:
+          SEGREDOS: ${{ toJSON(secrets) }}
+          NOMES: ${{ inputs.segredos_build }}
+        run: |
+          for nome in $NOMES; do
+            valor=$(jq -r --arg n "$nome" '.[$n] // empty' <<< "$SEGREDOS")
+            if [ -z "$valor" ]; then
+              echo "::error::O segredo $nome não existe no repositório (ou faltou secrets: inherit)."
+              exit 1
+            fi
+            {
+              echo "$nome<<__FIM__"
+              echo "$valor"
+              echo "__FIM__"
+            } >> "$GITHUB_ENV"
+          done
+
       - name: Instalar dependências
         run: npm ci
 
@@ -113,10 +136,20 @@ jobs:
           PROJETO_PAGES: ${{ inputs.projeto_pages }}
           PASTA_SAIDA: ${{ inputs.pasta_saida }}
         run: |
+          set -o pipefail
           case "$DESTINO" in
-            workers) npx -y wrangler@4 deploy ;;
+            workers) npx -y wrangler@4 deploy | tee deploy.log ;;
             pages)
               : "${PROJETO_PAGES:?informe projeto_pages para destino pages}"
-              npx -y wrangler@4 pages deploy "$PASTA_SAIDA" --project-name="$PROJETO_PAGES" ;;
+              npx -y wrangler@4 pages deploy "$PASTA_SAIDA" --project-name="$PROJETO_PAGES" | tee deploy.log ;;
             *) echo "Destino desconhecido: $DESTINO (use workers ou pages)"; exit 1 ;;
           esac
+
+      # O link fica no resumo da execução (aba Actions), sem precisar abrir o log.
+      - name: Link no resumo
+        run: |
+          {
+            echo "### Publicado${NEXT_PUBLIC_PREVIA:+ (prévia, fora da busca)}"
+            if [ -n "${NEXT_PUBLIC_SITE_URL:-}" ]; then echo "- $NEXT_PUBLIC_SITE_URL"; fi
+            grep -oE 'https://[A-Za-z0-9.-]+\.(workers|pages)\.dev' deploy.log | sort -u | sed 's/^/- /' || true
+          } >> "$GITHUB_STEP_SUMMARY"

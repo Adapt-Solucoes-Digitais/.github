@@ -10,6 +10,8 @@ name: Qualidade
 #       with:
 #         env_build: |
 #           NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+#         segredos_build: NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY  # opcional
+#       secrets: inherit  # só se usar segredos_build
 
 on:
   workflow_call:
@@ -24,6 +26,10 @@ on:
         default: "."
       env_build:
         description: Variáveis públicas do build, uma por linha (CHAVE=valor). Segredo não entra aqui.
+        type: string
+        default: ""
+      segredos_build:
+        description: "Nomes de segredos do repositório que o build precisa, separados por espaço (ex.: NEXT_PUBLIC_SUPABASE_URL). Exige secrets: inherit na chamada."
         type: string
         default: ""
 
@@ -51,6 +57,25 @@ jobs:
         env:
           ENV_BUILD: ${{ inputs.env_build }}
         run: printf '%s\n' "$ENV_BUILD" >> "$GITHUB_ENV"
+
+      - name: Segredos do build
+        if: inputs.segredos_build != ''
+        env:
+          SEGREDOS: ${{ toJSON(secrets) }}
+          NOMES: ${{ inputs.segredos_build }}
+        run: |
+          for nome in $NOMES; do
+            valor=$(jq -r --arg n "$nome" '.[$n] // empty' <<< "$SEGREDOS")
+            if [ -z "$valor" ]; then
+              echo "::error::O segredo $nome não existe no repositório (ou faltou secrets: inherit)."
+              exit 1
+            fi
+            {
+              echo "$nome<<__FIM__"
+              echo "$valor"
+              echo "__FIM__"
+            } >> "$GITHUB_ENV"
+          done
 
       - name: Instalar dependências
         run: npm ci
