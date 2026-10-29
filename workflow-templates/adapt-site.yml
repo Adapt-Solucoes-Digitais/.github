@@ -1,0 +1,28 @@
+name: Site
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+  workflow_dispatch:
+
+jobs:
+  qualidade:
+    uses: Adapt-Solucoes-Digitais/.github/.github/workflows/qualidade.yml@main
+    with:
+      env_build: |
+        NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+
+  publicar:
+    needs: qualidade
+    # Produção só no disparo manual. Quando o cliente aprovar publicar a cada
+    # push, troque por: github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    uses: Adapt-Solucoes-Digitais/.github/.github/workflows/publicar-cloudflare.yml@main
+    with:
+      destino: workers
+      previa: false
+      env_build: |
+        NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+    secrets: inherit

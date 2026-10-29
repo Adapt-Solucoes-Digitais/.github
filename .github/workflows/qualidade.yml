@@ -1,0 +1,69 @@
+name: Qualidade
+
+# Reutilizável: build, typecheck, testes e lint. O build vem antes do tsc
+# porque é ele que gera os tipos de rota do Next.
+#
+# No projeto:
+#   jobs:
+#     qualidade:
+#       uses: Adapt-Solucoes-Digitais/.github/.github/workflows/qualidade.yml@main
+#       with:
+#         env_build: |
+#           NEXT_PUBLIC_SITE_URL=https://exemplo.com.br
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        description: Versão do Node. A mesma da máquina, senão o npm ci reclama do lockfile.
+        type: string
+        default: "24"
+      pasta:
+        description: Pasta do projeto dentro do repositório.
+        type: string
+        default: "."
+      env_build:
+        description: Variáveis públicas do build, uma por linha (CHAVE=valor). Segredo não entra aqui.
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    name: Build, typecheck, testes e lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.pasta }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.pasta }}/package-lock.json
+
+      - name: Variáveis do build
+        if: inputs.env_build != ''
+        env:
+          ENV_BUILD: ${{ inputs.env_build }}
+        run: printf '%s\n' "$ENV_BUILD" >> "$GITHUB_ENV"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Typecheck
+        run: |
+          if [ -f tsconfig.json ]; then npx tsc --noEmit; else echo "Sem tsconfig.json, pulando."; fi
+
+      - name: Testes
+        run: npm run test --if-present
+
+      - name: Lint
+        run: npm run lint --if-present

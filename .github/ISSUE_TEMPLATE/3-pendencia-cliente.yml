@@ -1,0 +1,24 @@
+name: Pendência do cliente
+description: Algo que só o cliente pode passar (foto, texto, número, acesso).
+title: "Pendência: "
+labels: ["pendência do cliente"]
+body:
+  - type: markdown
+    attributes:
+      value: Dado de negócio nunca se inventa. Enquanto isto não chega, o lugar fica marcado no site e no CLAUDE.md do projeto.
+  - type: textarea
+    id: o-que-falta
+    attributes:
+      label: O que falta
+      placeholder: "Horário de funcionamento de sábado; foto da fachada"
+    validations:
+      required: true
+  - type: textarea
+    id: o-que-trava
+    attributes:
+      label: O que fica travado sem isso
+  - type: input
+    id: como-foi-pedido
+    attributes:
+      label: Como e quando foi pedido
+      placeholder: "WhatsApp, 29/10"

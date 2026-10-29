@@ -1,0 +1,122 @@
+name: Publicar na Cloudflare
+
+# Reutilizável: build e deploy com Wrangler, em Workers (assets estáticos ou
+# OpenNext) ou em Pages. Os segredos CLOUDFLARE_API_TOKEN e CLOUDFLARE_ACCOUNT_ID
+# ficam em cada repositório: no plano gratuito, segredo da org não chega em
+# repositório privado.
+#
+# No projeto:
+#   jobs:
+#     publicar:
+#       needs: qualidade
+#       if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+#       uses: Adapt-Solucoes-Digitais/.github/.github/workflows/publicar-cloudflare.yml@main
+#       with:
+#         destino: workers
+#         previa: true
+#         env_build: |
+#           NEXT_PUBLIC_SITE_URL=https://adapt-previa-exemplo.<subdominio>.workers.dev
+#       secrets: inherit
+
+on:
+  workflow_call:
+    inputs:
+      destino:
+        description: "workers (wrangler deploy, lê o wrangler.toml/jsonc do projeto) ou pages (wrangler pages deploy)."
+        type: string
+        default: workers
+      projeto_pages:
+        description: Nome do projeto no Cloudflare Pages. Só para destino pages.
+        type: string
+        default: ""
+      pasta_saida:
+        description: Pasta que o build gera (export estático do Next = out).
+        type: string
+        default: out
+      comando_build:
+        description: "Comando de build. Para OpenNext: npx @opennextjs/cloudflare build."
+        type: string
+        default: npm run build
+      previa:
+        description: "Prévia de lead: noindex nas três camadas (meta robots e robots.txt pelo NEXT_PUBLIC_PREVIA, X-Robots-Tag no _headers)."
+        type: boolean
+        default: false
+      node_version:
+        description: Versão do Node.
+        type: string
+        default: "24"
+      pasta:
+        description: Pasta do projeto dentro do repositório.
+        type: string
+        default: "."
+      env_build:
+        description: Variáveis públicas do build, uma por linha (CHAVE=valor). Segredo não entra aqui.
+        type: string
+        default: ""
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    name: Publicar (${{ inputs.destino }}${{ inputs.previa && ', prévia' || '' }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.pasta }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.pasta }}/package-lock.json
+
+      - name: Variáveis do build
+        env:
+          ENV_BUILD: ${{ inputs.env_build }}
+          PREVIA: ${{ inputs.previa }}
+        run: |
+          if [ -n "$ENV_BUILD" ]; then printf '%s\n' "$ENV_BUILD" >> "$GITHUB_ENV"; fi
+          if [ "$PREVIA" = "true" ]; then echo "NEXT_PUBLIC_PREVIA=true" >> "$GITHUB_ENV"; fi
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build
+        env:
+          COMANDO_BUILD: ${{ inputs.comando_build }}
+        run: bash -c "$COMANDO_BUILD"
+
+      - name: Prévia fora da busca
+        if: inputs.previa
+        env:
+          PASTA_SAIDA: ${{ inputs.pasta_saida }}
+        run: |
+          printf '\n# Prévia da Adapt: fora da busca\n/*\n  X-Robots-Tag: noindex, nofollow\n' >> "$PASTA_SAIDA/_headers"
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          DESTINO: ${{ inputs.destino }}
+          PROJETO_PAGES: ${{ inputs.projeto_pages }}
+          PASTA_SAIDA: ${{ inputs.pasta_saida }}
+        run: |
+          case "$DESTINO" in
+            workers) npx -y wrangler@4 deploy ;;
+            pages)
+              : "${PROJETO_PAGES:?informe projeto_pages para destino pages}"
+              npx -y wrangler@4 pages deploy "$PASTA_SAIDA" --project-name="$PROJETO_PAGES" ;;
+            *) echo "Destino desconhecido: $DESTINO (use workers ou pages)"; exit 1 ;;
+          esac

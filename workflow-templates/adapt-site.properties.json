@@ -1,0 +1,7 @@
+{
+  "name": "Adapt · Site",
+  "description": "Build, typecheck, testes e lint em todo push e PR; publicação na Cloudflare por disparo manual.",
+  "iconName": "adapt",
+  "categories": ["JavaScript", "TypeScript"],
+  "filePatterns": ["package.json$"]
+}

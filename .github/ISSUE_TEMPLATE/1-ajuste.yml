@@ -1,0 +1,30 @@
+name: Ajuste
+description: Mudar algo que já funciona (texto, foto, layout ou comportamento).
+title: "Ajuste: "
+labels: ["ajuste"]
+body:
+  - type: textarea
+    id: o-que-muda
+    attributes:
+      label: O que muda
+      description: Como está hoje e como deve ficar.
+    validations:
+      required: true
+  - type: input
+    id: onde
+    attributes:
+      label: Onde
+      description: Página, seção ou link.
+      placeholder: "/cardapio, seção de horários"
+  - type: textarea
+    id: referencia
+    attributes:
+      label: Referência
+      description: Print, link ou o pedido do cliente do jeito que ele mandou.
+  - type: dropdown
+    id: quem-pediu
+    attributes:
+      label: Quem pediu
+      options:
+        - Cliente
+        - A gente
