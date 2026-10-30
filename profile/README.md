@@ -47,7 +47,8 @@ O nome vem de adaptação. O símbolo é uma sinapse: no travessão do **A**, do
 | Pagamento | Mercado Pago (Pix com QR Code dinâmico e boleto) |
 | Hospedagem | Cloudflare |
 | E-mail | Resend |
-| Métricas e monitoramento | Umami, Sentry e UptimeRobot |
+| Métricas e monitoramento | Cloudflare Web Analytics, Workers Logs e UptimeRobot |
+| Formulários e dados simples | Cloudflare Turnstile, D1 e R2 |
 | Integração contínua | GitHub Actions |
 
 ## Alguns trabalhos
