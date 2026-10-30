@@ -7,7 +7,8 @@
 
 <p align="center">
   <b>Software house de SP.</b><br>
-  Sites e sistemas rápidos, acessíveis e com cara própria.
+  Sites e sistemas rápidos, acessíveis e com cara própria.<br>
+  <a href="https://adapt.tec.br">adapt.tec.br</a>
 </p>
 
 ---
@@ -43,9 +44,10 @@ O nome vem de adaptação. O símbolo é uma sinapse: no travessão do **A**, do
 |---|---|
 | Front | Next.js 16 (App Router e React Server Components) e TypeScript |
 | Estilo e movimento | Tailwind CSS, Framer Motion, GSAP e Lenis |
+| 3D | Three.js e React Three Fiber |
 | Dados | Supabase (Postgres, Auth, Storage e Realtime) |
 | Pagamento | Mercado Pago (Pix com QR Code dinâmico e boleto) |
-| Hospedagem | Cloudflare |
+| Hospedagem | Cloudflare Workers |
 | E-mail | Resend |
 | Métricas e monitoramento | Cloudflare Web Analytics, Workers Logs e UptimeRobot |
 | Formulários e dados simples | Cloudflare Turnstile, D1 e R2 |
