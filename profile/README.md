@@ -70,7 +70,8 @@ Hugo Shiroma, formado em computação pela USP. Portfólio em [shiroma.dev.br](h
 
 ## Bora conversar?
 
-- E-mail: [adapt.tec.solucoesdigitais@gmail.com](mailto:adapt.tec.solucoesdigitais@gmail.com)
-- Site: [adapt.tec.br](https://adapt.tec.br) (no forno)
+- E-mail: [contato@adapt.tec.br](mailto:contato@adapt.tec.br)
+- WhatsApp: [(11) 91269-4821](https://wa.me/5511912694821)
+- Site: [adapt.tec.br](https://adapt.tec.br)
 
 <sub>Feito em SP.</sub>
